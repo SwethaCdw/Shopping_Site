@@ -1,0 +1,1 @@
+export const walletLimit = 5000;
