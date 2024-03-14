@@ -1,4 +1,4 @@
-import { DELETE_ITEM, ADD_ITEM } from "../constants/common-constants.js";
+import { DELETE_ITEM, ADD_ITEM, INT_TYPE, FLOAT_TYPE } from "../constants/common-constants.js";
 /**
  * Multiple choice prompt
  * @param {*} message 
@@ -35,7 +35,7 @@ export const findDuplicateAndUpdate = (itemsArray, productId, productQuantity, o
     switch (operation) {
         case DELETE_ITEM:
             if (duplicateItem.quantity > 1) {
-                const option = getInputFromUser(`Click 1 for removing the whole product \n Click 2 for removing one quantity of the product`, 'int');
+                const option = getInputFromUser(`Click 1 for removing the whole product \n Click 2 for removing one quantity of the product`, INT_TYPE);
                 if(option){
                     switch(option){
                         case 1:
@@ -79,8 +79,8 @@ export const sanitizeInput = (input) => {
  * @returns 
  */
 export const getInputFromUser = (message, type) => {
-    if (type === 'int' || type === 'float') {
-        return type === 'int' ? parseInt(prompt(message)) : parseFloat(prompt(message));
+    if (type === INT_TYPE || type === FLOAT_TYPE) {
+        return type === INT_TYPE ? parseInt(prompt(message)) : parseFloat(prompt(message));
     } else {
         return prompt(message)?.trim();
     }
@@ -95,14 +95,4 @@ export const getInputFromUser = (message, type) => {
 export const removeObjectFromArray = (sourceArray, itemToBeRemoved) => {
     sourceArray.splice(sourceArray.indexOf(itemToBeRemoved), 1);
     return sourceArray;
-}
-
-/**
- * Restrict the decimal to 2
- * @param {*} value 
- * @returns 
- */
-export const restrictDecimal = (value) => {
-    const roundedValue = Number(value).toFixed(2);
-    return roundedValue;
 }

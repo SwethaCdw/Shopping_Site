@@ -2,7 +2,7 @@ import { productData } from "../services/product-service.js";
 import { clearCart, deleteProductFromCart, getCartDetails } from "./cart.js";
 import { findDuplicateAndUpdate, getInputFromUser } from '../utils/common-utils.js';
 import { SHOP, CART } from '../constants/shop-constants.js';
-import { ADD_ITEM } from "../constants/common-constants.js";
+import { ADD_ITEM, INT_TYPE } from "../constants/common-constants.js";
 
 let wishlist = [];
 
@@ -41,7 +41,7 @@ export const moveToWishlist = (selectedOption) => {
  * @param {*} sourceName 
  */
 const moveSpecificProductToWishlist = (sourceArray, sourceName) => {
-    const productId = getInputFromUser(`Enter a product id to move to wishlist`, 'int');    
+    const productId = getInputFromUser(`Enter a product id to move to wishlist`, INT_TYPE);    
     if (isNaN(productId)) {
         console.log('Invalid Product ID');
         return;
@@ -68,3 +68,15 @@ const moveSpecificProductToWishlist = (sourceArray, sourceName) => {
  * @returns wishlist items
  */
 export const getWishlistItems = () =>  wishlist;
+
+/**
+ * Clear wishlist items
+ */
+export const clearWishlist = () => {
+    if(wishlist.length){
+        wishlist.length = 0;
+        console.log("Wishlist cleared.");
+    } else {
+        alert("wishlist is empty. Press 'a' to Add items to cart");
+    }
+}

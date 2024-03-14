@@ -1,6 +1,7 @@
 import { productData } from '../services/product-service.js';
 import { sanitizeInput, getInputFromUser } from '../utils/common-utils.js';
 import { PRICE, CATEGORY } from '../constants/shop-constants.js';
+import {FLOAT_TYPE} from '../constants/common-constants.js';
 /**
  * To Filter products based on multiple categories
  * @param {*} selectedFilter 
@@ -11,8 +12,8 @@ export const filterProductsByCategory = (selectedFilter) => {
     selectedFilter.forEach(option => {
         switch(option){
             case PRICE:
-                filterValues.minPrice = getInputFromUser('Enter min price', 'float');
-                filterValues.maxPrice = getInputFromUser('Enter max price', 'float');
+                filterValues.minPrice = getInputFromUser('Enter min price', FLOAT_TYPE);
+                filterValues.maxPrice = getInputFromUser('Enter max price', FLOAT_TYPE);
                 break;
             case CATEGORY:
                 filterValues.category = getInputFromUser('Enter the category');
@@ -20,8 +21,12 @@ export const filterProductsByCategory = (selectedFilter) => {
         }
     });
     const filteredProducts = filterProducts(filterValues);
-    return filteredProducts;
+    if (filteredProducts.length === 0) {
+        console.log('No products found');
+        return;
+    }
     
+    return filteredProducts;
 };
 
 /**

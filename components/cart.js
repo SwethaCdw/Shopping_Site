@@ -1,5 +1,5 @@
 import { productData } from '../services/product-service.js';
-import { findDuplicateAndUpdate, restrictDecimal } from '../utils/common-utils.js';
+import { findDuplicateAndUpdate } from '../utils/common-utils.js';
 import { ADD_ITEM, DELETE_ITEM } from '../constants/common-constants.js'
 var cart = []; 
 
@@ -75,6 +75,6 @@ export const deleteProductFromCart = (productId) => {
  */
 export const calculateCartPrice = () => {
     const totalCartPrice = cart.reduce((total, product) => total + product.totalPrice, 0)
-    return restrictDecimal(totalCartPrice);
+    return totalCartPrice;
 };
 
