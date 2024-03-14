@@ -11,7 +11,7 @@ export const searchProduct = () => {
         console.log('Invalid input. Please enter a valid product name');
         return false;
     } 
-    const productsFound = productData.filter(product => sanitizeInput(product.title).toLowerCase().includes(sanitizeInput(productNameInput).toLowerCase())); 
+    const productsFound = productData.filter(product => sanitizeInput(product.title).includes(sanitizeInput(productNameInput))); 
     if (productsFound.length === 0) {
         console.log('No products found');
         return false;
