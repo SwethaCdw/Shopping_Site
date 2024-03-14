@@ -1,4 +1,5 @@
 import { WALLET_LIMIT } from "../constants/wallet-constants.js";
+import { getInputFromUser, restrictDecimal } from '../utils/common-utils.js';
 
 let walletAmount = 200;
 
@@ -7,14 +8,13 @@ let walletAmount = 200;
  * @returns updated wallet amount
  */
 export const rechargeWallet = () => {
-    const rechargeAmount = parseFloat(prompt('Please enter the amount to be recharged')); 
-    
+    const rechargeAmount = getInputFromUser('Please enter the amount to be recharged', 'float');    
     if (!rechargeAmount || rechargeAmount <= 0) { 
         console.log('Invalid input. Please enter a valid positive amount');
         return false;
     } 
     
-    const updatedWalletAmount = walletAmount + rechargeAmount;
+    const updatedWalletAmount = restrictDecimal(walletAmount + rechargeAmount);
     if (updatedWalletAmount > WALLET_LIMIT) {
         console.log(`Limit exceeded. Limit is ${WALLET_LIMIT}. You can recharge up to ${WALLET_LIMIT - walletAmount}`);
         return false;
@@ -37,5 +37,5 @@ export const checkWalletBalance = () => walletAmount;
  * @returns wallet amount
  */
 export const updateWalletOnCheckout = (updatedWalletAmount, cartPrice) => {
-    walletAmount = updatedWalletAmount - cartPrice;
+    walletAmount = restrictDecimal(updatedWalletAmount - cartPrice);
 } 

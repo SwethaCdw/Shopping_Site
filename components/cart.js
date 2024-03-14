@@ -1,14 +1,13 @@
 import { productData } from '../services/product-service.js';
-import { findDuplicateAndUpdate } from '../utils/common-utils.js';
-
-const cart = []; 
+import { findDuplicateAndUpdate, restrictDecimal } from '../utils/common-utils.js';
+import { ADD_ITEM, DELETE_ITEM } from '../constants/common-constants.js'
+var cart = []; 
 
 /**
  * Add product item to cart
  * @returns cart Item and Cart Price
  */
-export const addToCart = () => {
-    const productIdInput = parseInt(prompt('Enter a product id to add to cart')); 
+export const addToCart = (productIdInput) => {
     if (!productIdInput) {
         console.log('Invalid input. Please enter a valid product id.');
         return false;
@@ -20,7 +19,7 @@ export const addToCart = () => {
         return false;
     }
 
-    const duplicate = findDuplicateAndUpdate(cart, productIdInput, false);
+    const duplicate = findDuplicateAndUpdate(cart, productIdInput, null, ADD_ITEM);
     if (!duplicate) {
         cart.push({ ...product, quantity: 1, totalPrice: product.price });
     }
@@ -48,7 +47,6 @@ export const clearCart = () => {
 export const getCartDetails = () => {
     let cartPrice = calculateCartPrice();
     return {cart, cartPrice};
-    
 }
 
 /**
@@ -56,13 +54,13 @@ export const getCartDetails = () => {
  * @param {*} productId 
  * @returns 
  */
-export const deleteProductFromCart = (productId = parseInt(prompt('Enter a product id to delete from cart'))) => {
+export const deleteProductFromCart = (productId) => {
     if (!productId) {
         console.log('Invalid input. Please enter a valid product id.');
         return false;
     }
 
-    const deletedItem = findDuplicateAndUpdate(cart, productId, true);
+    const deletedItem = findDuplicateAndUpdate(cart, productId, null, DELETE_ITEM);
     if (!deletedItem) {
         console.log("Product not found in the cart.");
         return false;
@@ -75,5 +73,8 @@ export const deleteProductFromCart = (productId = parseInt(prompt('Enter a produ
  * Calculate cart price
  * @returns total price in cart
  */
-export const calculateCartPrice = () => cart.reduce((total, product) => total + product.totalPrice, 0);
+export const calculateCartPrice = () => {
+    const totalCartPrice = cart.reduce((total, product) => total + product.totalPrice, 0)
+    return restrictDecimal(totalCartPrice);
+};
 

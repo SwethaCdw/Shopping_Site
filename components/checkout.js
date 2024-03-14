@@ -1,7 +1,7 @@
 import { calculateCartPrice, clearCart } from "./cart.js";
 import { checkWalletBalance, updateWalletOnCheckout } from "./wallet.js";
-import { CONFIRMATION } from '../constants/checkout-constants.js';
-
+import { CONFIRMATION } from '../constants/common-constants.js';
+import { getInputFromUser } from '../utils/common-utils.js';
 /**
  * Checkout Page
  */
@@ -19,7 +19,7 @@ export const checkout = () => {
         return;
     }
 
-    const confirmation = prompt(`Type 'yes' to confirm checkout! Total price : ${totalCartPrice}`);
+    const confirmation = getInputFromUser(`Type ${CONFIRMATION} to confirm checkout! Total price : ${totalCartPrice}`);
     if (confirmation !== CONFIRMATION) {
         console.log('Checkout cancelled due to invalid statement');
         return;

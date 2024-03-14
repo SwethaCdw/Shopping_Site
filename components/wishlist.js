@@ -1,6 +1,8 @@
 import { productData } from "../services/product-service.js";
 import { clearCart, deleteProductFromCart, getCartDetails } from "./cart.js";
-import { findDuplicateAndUpdate } from '../utils/common-utils.js';
+import { findDuplicateAndUpdate, getInputFromUser } from '../utils/common-utils.js';
+import { SHOP, CART } from '../constants/shop-constants.js';
+import { ADD_ITEM } from "../constants/common-constants.js";
 
 let wishlist = [];
 
@@ -13,21 +15,19 @@ export const moveToWishlist = (selectedOption) => {
     const { cart } = getCartDetails();
     switch(selectedOption){
         case 1:
-            moveSpecificProductToWishlist(productData, 'shop');
+            moveSpecificProductToWishlist(productData, SHOP);
             break;
         case 2:
-            if(cart){
-                cart.forEach((cartItem) => {
-                    let duplicate = findDuplicateAndUpdate(wishlist, cartItem.id, false);
-                    if (!duplicate) {
-                        wishlist.push(cartItem);
-                    }
-                });
-                clearCart();
-            }
+            cart?.forEach((cartItem) => {
+                let duplicate = findDuplicateAndUpdate(wishlist, cartItem.id, cartItem.quantity, ADD_ITEM);
+                if (!duplicate) {
+                    wishlist.push(cartItem);
+                }
+            });
+            clearCart();
             break;
         case 3:
-            moveSpecificProductToWishlist(cart, 'cart');
+            moveSpecificProductToWishlist(cart, CART);
             break;
 
 
@@ -41,28 +41,25 @@ export const moveToWishlist = (selectedOption) => {
  * @param {*} sourceName 
  */
 const moveSpecificProductToWishlist = (sourceArray, sourceName) => {
-    const productId = parseInt(prompt(`Enter a product id to move to wishlist`));
-    
+    const productId = getInputFromUser(`Enter a product id to move to wishlist`, 'int');    
     if (isNaN(productId)) {
         console.log('Invalid Product ID');
         return;
     }
 
-    if (findDuplicateAndUpdate(wishlist, productId, false)) {
-        console.log('Product already exists in wishlist');
-        return;
-    }
-
-    const product = sourceArray.find(item => item.id === productId);
-    if (!product) {
-        console.log('Product not found in', sourceName);
-        return;
-    }
-
-    wishlist.push(product);
-
-    if (sourceName === 'cart') {
-        deleteProductFromCart(productId);
+    let duplicate = findDuplicateAndUpdate(wishlist, productId, null, ADD_ITEM)
+    if(!duplicate){
+        const product = sourceArray.find(item => item.id === productId);
+        if (!product) {
+            console.log('Product not found in', sourceName);
+            return;
+        }
+    
+        wishlist.push({...product, quantity: 1, totalPrice: product.price});
+    
+        if (sourceName === CART) {
+            deleteProductFromCart(productId);
+        }
     }
 };
 

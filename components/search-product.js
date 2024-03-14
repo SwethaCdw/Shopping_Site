@@ -1,16 +1,17 @@
 import { productData } from '../services/product-service.js';
+import { sanitizeInput, getInputFromUser } from '../utils/common-utils.js';
 
 /**
  * Search a product by product name/title
  * @returns products Found
  */
 export const searchProduct = () => {
-    const productNameInput = prompt('Please enter the product name to be searched for')?.trim();
+    const productNameInput = getInputFromUser('Please enter the product name to be searched for');
     if (!productNameInput) {
         console.log('Invalid input. Please enter a valid product name');
         return false;
     } 
-    const productsFound = productData.filter(product => product.title.toLowerCase().includes(productNameInput.toLowerCase())); 
+    const productsFound = productData.filter(product => sanitizeInput(product.title).toLowerCase().includes(sanitizeInput(productNameInput).toLowerCase())); 
     if (productsFound.length === 0) {
         console.log('No products found');
         return false;

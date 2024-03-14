@@ -4,7 +4,7 @@ import { addToCart, getCartDetails, deleteProductFromCart, clearCart } from './c
 import { checkout } from './components/checkout.js';
 import { checkWalletBalance, rechargeWallet } from './components/wallet.js';
 import { getWishlistItems, moveToWishlist } from './components/wishlist.js';
-import { multipleChoicePrompt } from './utils/common-utils.js';
+import { multipleChoicePrompt, getInputFromUser } from './utils/common-utils.js';
 import { FILTER_CHOICES } from './constants/shop-constants.js';
 
 document.addEventListener('keydown', function(event) {
@@ -19,7 +19,7 @@ document.addEventListener('keydown', function(event) {
             break;
         case 'f' || 'F':
             console.log('FILTER PRODUCT BASED ON CATEGORIES');
-            const selectedOptions = multipleChoicePrompt("Please select an option:", FILTER_CHOICES);
+            const selectedOptions = multipleChoicePrompt("Do you want this option to filter :", FILTER_CHOICES);
             if (selectedOptions.length > 0) {
                 const filteredProducts = filterProductsByCategory(selectedOptions);
                 console.log('Result Products', filteredProducts);
@@ -29,7 +29,8 @@ document.addEventListener('keydown', function(event) {
             break;
         case 'a' || 'A':
             console.log('ADD TO CART');
-            const { product, totalCartPrice } = addToCart();
+            const productIdInput = getInputFromUser('Enter a product id to add to cart', 'int');
+            const { product, totalCartPrice } = addToCart(productIdInput);
             if(product && totalCartPrice){
                 console.log(`Added ${product.title} to cart. Total Cart Price is ${totalCartPrice}`);
             }
@@ -46,9 +47,28 @@ document.addEventListener('keydown', function(event) {
             break;
         case 'x' || 'X':
             console.log('DELETE CART ITEM');
-            const deletedItem = deleteProductFromCart();
+            const productId = getInputFromUser('Enter a product id to delete from cart', 'int');
+            const deletedItem = deleteProductFromCart(productId);
             if(deletedItem){
                 console.log('Deleted item', deletedItem.title);
+            }
+            break;
+        case 'q' || 'Q':
+            clearCart();
+            break;
+        case 'm' || 'M':
+            console.log('MOVE TO WISHLIST');
+            const option = getInputFromUser(`Type '1' - Add a product to wishlist' \n Type '2' - Move cart items to wishlist \n Type 3 - Move a particular item from cart to wishlist`,'int');
+            const wishlist = moveToWishlist(option);
+            console.log('Wishlist items : ', wishlist);
+            break;
+        case 'w' || 'W':
+            console.log('GET WISHLIST ITEMS');
+            const wishlistItems = getWishlistItems();
+            if(wishlistItems.length) {
+                console.log('Wishlist Items:', wishlistItems);
+            } else {
+                console.log('Wishlist is empty. Press "m" to add items to Wishlist');
             }
             break;
         case 'c' || 'C':
@@ -65,24 +85,6 @@ document.addEventListener('keydown', function(event) {
         case 'b' || 'B':
             const walletBalance = checkWalletBalance();
             console.log(`WALLET BALANCE : ${walletBalance}`);
-            break;
-        case 'm' || 'M':
-            console.log('MOVE TO WISHLIST');
-            const option = parseInt(prompt(`Type '1' - Add a product to wishlist' \n Type '2' - Move cart items to wishlist \n Type 3 - Move a particular item from cart to wishlist`));
-            const wishlist = moveToWishlist(option);
-            console.log('Wishlist items : ', wishlist);
-            break;
-        case 'w' || 'W':
-            console.log('GET WISHLIST ITEMS');
-            const wishlistItems = getWishlistItems();
-            if(wishlistItems.length) {
-                console.log('Wishlist Items:', wishlistItems);
-            } else {
-                console.log('Wishlist is empty. Press "m" to add items to Wishlist');
-            }
-            break;
-        case 'q' || 'Q':
-            clearCart();
             break;
     }
 

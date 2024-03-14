@@ -1,21 +1,21 @@
 import { productData } from '../services/product-service.js';
-
+import { sanitizeInput, getInputFromUser } from '../utils/common-utils.js';
+import { PRICE, CATEGORY } from '../constants/shop-constants.js';
 /**
  * To Filter products based on multiple categories
  * @param {*} selectedFilter 
  * @returns filtered Products
  */
 export const filterProductsByCategory = (selectedFilter) => {
-    console.log("Selected options:", selectedFilter);
-    let filterValues = { minPrice : 0, maxPrice : 0, category : '' };
+    let filterValues = {};
     selectedFilter.forEach(option => {
         switch(option){
-            case 'Price':
-                filterValues.minPrice = parseFloat(prompt('Enter min price'));
-                filterValues.maxPrice = parseFloat(prompt('Enter max price'));
+            case PRICE:
+                filterValues.minPrice = getInputFromUser('Enter min price', 'float');
+                filterValues.maxPrice = getInputFromUser('Enter max price', 'float');
                 break;
-            case 'Category':
-                filterValues.category = prompt('Enter the category');
+            case CATEGORY:
+                filterValues.category = getInputFromUser('Enter the category');
                 break;
         }
     });
@@ -36,7 +36,7 @@ export const filterProducts = (filterValues) => {
         if ((minPrice && product.price < minPrice) || (maxPrice && product.price > maxPrice)) {
             return false;
         }
-        if (category && product.category !== category) {
+        if (category && sanitizeInput(product.category) !== sanitizeInput(category)) {
             return false;
         }
         return true;

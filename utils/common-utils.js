@@ -1,4 +1,4 @@
-
+import { DELETE_ITEM, ADD_ITEM } from "../constants/common-constants.js";
 /**
  * Multiple choice prompt
  * @param {*} message 
@@ -25,21 +25,21 @@ export const multipleChoicePrompt = (message, choices) => {
  * @param {*} isDeletion 
  * @returns deleted item/true/false
  */
-export const findDuplicateAndUpdate = (itemsArray, productId, isDeletion) => {
+export const findDuplicateAndUpdate = (itemsArray, productId, productQuantity, operation) => {
     const duplicateItem = itemsArray.find(item => item.id === productId);
 
     if (!duplicateItem) {
-        return false; // No duplicate item found
+        return false; 
     }
 
-    switch (isDeletion) {
-        case true:
+    switch (operation) {
+        case DELETE_ITEM:
             if (duplicateItem.quantity > 1) {
-                const option = parseInt(prompt(`Click 1 for removing the whole product \n Click 2 for removing one quantity of the product`));
+                const option = getInputFromUser(`Click 1 for removing the whole product \n Click 2 for removing one quantity of the product`, 'int');
                 if(option){
                     switch(option){
                         case 1:
-                            itemsArray.splice(itemsArray.indexOf(duplicateItem), 1);
+                            itemsArray = removeObjectFromArray(itemsArray, duplicateItem);
                             break;
                         case 2: 
                             duplicateItem.quantity--;
@@ -50,14 +50,59 @@ export const findDuplicateAndUpdate = (itemsArray, productId, isDeletion) => {
                     console.log('Invalid Input');
                 }
             } else {
-                itemsArray.splice(itemsArray.indexOf(duplicateItem), 1);
+                itemsArray = removeObjectFromArray(itemsArray, duplicateItem);
             }
             return duplicateItem;
-        case false:
-            duplicateItem.quantity++;
+
+        case ADD_ITEM:
+            productQuantity ? duplicateItem.quantity += productQuantity : duplicateItem.quantity++;
             duplicateItem.totalPrice = duplicateItem.price * duplicateItem.quantity;
             return true;
         default:
             return false;
     }
 };
+
+/**
+ * Sanitize the input by removing special characters and space
+ * @param {*} input 
+ * @returns 
+ */
+export const sanitizeInput = (input) => {
+    return input.trim().replace(/[^\w\s]/gi, '').toLowerCase();
+}
+
+/**
+ * Prompt the user with the message
+ * @param {*} message 
+ * @param {*} type 
+ * @returns 
+ */
+export const getInputFromUser = (message, type) => {
+    if (type === 'int' || type === 'float') {
+        return type === 'int' ? parseInt(prompt(message)) : parseFloat(prompt(message));
+    } else {
+        return prompt(message)?.trim();
+    }
+}
+
+/**
+ * Remove the object from an array
+ * @param {*} sourceArray 
+ * @param {*} itemToBeRemoved 
+ * @returns 
+ */
+export const removeObjectFromArray = (sourceArray, itemToBeRemoved) => {
+    sourceArray.splice(sourceArray.indexOf(itemToBeRemoved), 1);
+    return sourceArray;
+}
+
+/**
+ * Restrict the decimal to 2
+ * @param {*} value 
+ * @returns 
+ */
+export const restrictDecimal = (value) => {
+    const roundedValue = Number(value).toFixed(2);
+    return roundedValue;
+}
