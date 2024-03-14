@@ -1,11 +1,11 @@
 import { searchProduct } from './components/search-product.js';
 import { filterProductsByCategory } from './components/filter-product.js';
-import { addToCart, getCartDetails, deleteProductFromCart } from './components/cart.js';
+import { addToCart, getCartDetails, deleteProductFromCart, clearCart } from './components/cart.js';
 import { checkout } from './components/checkout.js';
 import { checkWalletBalance, rechargeWallet } from './components/wallet.js';
 import { getWishlistItems, moveToWishlist } from './components/wishlist.js';
 import { multipleChoicePrompt } from './utils/common-utils.js';
-import { filterChoices } from './constants/shop-constants.js';
+import { FILTER_CHOICES } from './constants/shop-constants.js';
 
 document.addEventListener('keydown', function(event) {
 
@@ -19,7 +19,7 @@ document.addEventListener('keydown', function(event) {
             break;
         case 'f' || 'F':
             console.log('FILTER PRODUCT BASED ON CATEGORIES');
-            const selectedOptions = multipleChoicePrompt("Please select an option:", filterChoices);
+            const selectedOptions = multipleChoicePrompt("Please select an option:", FILTER_CHOICES);
             if (selectedOptions.length > 0) {
                 const filteredProducts = filterProductsByCategory(selectedOptions);
                 console.log('Result Products', filteredProducts);
@@ -37,14 +37,18 @@ document.addEventListener('keydown', function(event) {
         case 'd' || 'D':
             console.log('DISPLAY CART DETAILS');
             const {cart, cartPrice} = getCartDetails();
-            console.log('Cart -->', cart);
-            console.log(`Total cart price ${cartPrice}`)
+            if(cart.length){
+                console.log('Cart -->', cart);
+                console.log(`Total cart price ${cartPrice}`)
+            } else {
+                console.log('Cart is Empty! Click A to add items to cart')
+            }
             break;
         case 'x' || 'X':
             console.log('DELETE CART ITEM');
-            const cartDetails = deleteProductFromCart();
-            if(cartDetails){
-                console.log('Updated cart items', cartDetails);
+            const deletedItem = deleteProductFromCart();
+            if(deletedItem){
+                console.log('Deleted item', deletedItem.title);
             }
             break;
         case 'c' || 'C':
@@ -64,7 +68,7 @@ document.addEventListener('keydown', function(event) {
             break;
         case 'm' || 'M':
             console.log('MOVE TO WISHLIST');
-            const option = prompt(`Type '1' - Add a product to wishlist' (or) Type '2' - Move cart items to wishlist`);
+            const option = parseInt(prompt(`Type '1' - Add a product to wishlist' \n Type '2' - Move cart items to wishlist \n Type 3 - Move a particular item from cart to wishlist`));
             const wishlist = moveToWishlist(option);
             console.log('Wishlist items : ', wishlist);
             break;
@@ -76,6 +80,9 @@ document.addEventListener('keydown', function(event) {
             } else {
                 console.log('Wishlist is empty. Press "m" to add items to Wishlist');
             }
+            break;
+        case 'q' || 'Q':
+            clearCart();
             break;
     }
 

@@ -1,1 +1,1 @@
-export const filterChoices = ['Price', 'Category'];
+export const FILTER_CHOICES = ['Price', 'Category'];

@@ -1,1 +1,1 @@
-export const walletLimit = 5000;
+export const WALLET_LIMIT = 5000;

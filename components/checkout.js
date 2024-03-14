@@ -1,6 +1,10 @@
 import { calculateCartPrice, clearCart } from "./cart.js";
 import { checkWalletBalance, updateWalletOnCheckout } from "./wallet.js";
+import { CONFIRMATION } from '../constants/checkout-constants.js';
 
+/**
+ * Checkout Page
+ */
 export const checkout = () => {
     const totalCartPrice = calculateCartPrice();
     const walletAmount = checkWalletBalance();
@@ -11,12 +15,12 @@ export const checkout = () => {
     }
 
     if (totalCartPrice > walletAmount) {
-        alert("You do not have enough money in the wallet. Click 'R' to recharge wallet");
+        alert(`You do not have enough money in the wallet. Current Amount: ${walletAmount} - Click 'R' to recharge wallet.`);
         return;
     }
 
     const confirmation = prompt(`Type 'yes' to confirm checkout! Total price : ${totalCartPrice}`);
-    if (confirmation !== 'yes') {
+    if (confirmation !== CONFIRMATION) {
         console.log('Checkout cancelled due to invalid statement');
         return;
     }
